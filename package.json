@@ -1,0 +1,27 @@
+{
+  "name": "youngtube",
+  "version": "1.0.0",
+  "description": "The best way to watch videos.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KTYoung2/youngtube.git"
+  },
+  "scripts": {
+    "dev": "nodemon --exec babel-node src/server.js"
+  },
+  "author": "young",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KTYoung2/youngtube/issues"
+  },
+  "homepage": "https://github.com/KTYoung2/youngtube#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.21.4",
+    "nodemon": "^2.0.22"
+  }
+}
