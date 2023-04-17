@@ -224,3 +224,20 @@ import { watch, edit } from "../controllers/videoController";
            ** ../ -> 지금 파일에서 벗어남을 의미
               ./ ->  지금의 위치
 
+
+
+===============================================
+
+5.5 Pug
+
+pug는 모두 탭과 띄어쓰기로 구분됨.
+
+doctype html 
+html(lang="ko")
+    head 
+        title #{pageTitle} | YoungTuBE
+    body 
+        block content
+    footer
+
+

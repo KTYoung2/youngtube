@@ -10,6 +10,8 @@ import videoRouter from "./routers/videoRouter";
 const PORT = 4000;
 
 
+
+
 //1.express application 생성
 const app = express();
 
@@ -19,8 +21,23 @@ app.use(logger("dev"));
 "combined" , "common" , "dev", "short", "tiny"
 */
 
+/*뷰(템플릿)엔진 -> pug 세팅.(html을 return하기 위해) 
+app.set("view engine", "pug");
+세팅만 해주면 express가 views 디렉토리에서 pug 파일을 찾도록 설정이 되어 있어
+import 안 해줘도됨. 
+*/
+app.set("view engine", "pug");
 
-
+/*
+기본적으로 express는 
+현재 작업 위치(디렉토리)에서 pug를 찾음.
+** 현재 작업 위치의 기준은? 
+-> 서버를 기동하는 파일의 위치에 따라 결정 (node.js를 어디서 실행시키고 있지??)
+                                         -> package.json 
+ 현재 작업 위치 변경 
+ app.set("views", process.cwd() + "/src/views(경로)");                                   
+*/
+app.set("views", process.cwd() + "/src/views");
 //router 생성
 app.use("/", globalRouter);
 app.use("/videos", videoRouter);

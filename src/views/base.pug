@@ -1,0 +1,17 @@
+doctype html 
+html(lang="ko")
+    head 
+        title #{pageTitle} | YoungTuBE
+        //- 변수 내보내는 곳 -> controller
+        link(rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css")
+    body 
+        main
+            block content
+            //- block문  extends base.pug를 통해서 부모 템플릿을 상속받으면, 
+                base.pug의 해당 block 에 body.pug에서 설정한 block이 입력돼서 html이 완성되는 식이다.
+                공통되는 부분은 놔두고, 자주 바뀌는 부분만 block으로 관리하면 동적으로 html을 구상할 수 있다. 
+                header, content, footer로 나눠서 미리 header, footer는 작성해두고 content부분만 코딩하는 방식으로 사용 가능
+    include partials/footer.pug
+    //- 파일 분활하기. 
+
+    //- 상속 ( 레이아웃, html 베이스를 만들어줌.) -> 모든 파일들이 이 베이스에서부터 확장해나가는 것.  
