@@ -1,6 +1,10 @@
 extends base.pug
+include mixins/video
 
 block content 
-    h1 home!
-    input(placeholder="What's your name?")
-    button send
+    h2 Welcom here you will see the tranding viedos
+    each videoInfoValue in videos 
+        +video(videoInfoValue) 
+    else 
+        li sorry noting found.
+        

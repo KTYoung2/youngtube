@@ -4,7 +4,12 @@ html(lang="ko")
         title #{pageTitle} | YoungTuBE
         //- 변수 내보내는 곳 -> controller
         link(rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css")
-    body 
+    body
+        header
+            h1=pageTitle
+            //-  #{변수} , 태그=변수는 똑같은 것. 근데 왜 다르게 표기하냐면 
+                 #{변수} => 다른 text와 섞어 사용하고  #{pageTitle} | YoungTuBE
+                 =변수 => html 태그에 하나의 변수값만 집어넣는 것.( 텍스트와 함께 사용 불가능!) 
         main
             block content
             //- block문  extends base.pug를 통해서 부모 템플릿을 상속받으면, 
