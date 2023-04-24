@@ -1,4 +1,10 @@
 extends base.pug
 
 block content
-    h1 Edit Video !
+    h4 Change title of video
+    form(method="POST")
+        //- POST : 파일을 보내거나 db 값을 바꾸는 뭔가를 보낼때 사용
+        //- GET : form에 있는 정보가 url에 그대로 노출
+        input(name="title",placeholder="Video Title",value=video.title,required)
+        //-input에 name 부여(하지 않으면 정보 얻을수 없셈)
+        input(value="Save",type="submit")
