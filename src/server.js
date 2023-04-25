@@ -7,9 +7,6 @@ import globalRouter from "./routers/globalRouter";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 
-const PORT = 4000;
-
-
 
 
 //1.express application 생성
@@ -38,18 +35,12 @@ app.set("view engine", "pug");
  app.set("views", process.cwd() + "/src/views(경로)");                                   
 */
 app.set("views", process.cwd() + "/src/views");
+/* express에게 form value를 이해하도록 하고, 자바스크립트 형식으로 변형시켜줌 */
+app.use(express.urlencoded({ extended: true }));
 //router 생성
 app.use("/", globalRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 
 
-const handleListening = () => console.log(`Server listening on port http://localhost/:${PORT}🚀`);
-
-/*
- 3. 서버 외부에 개방하기. 
- 서버는 listen 하고 있어야함.  
- JS event 함수 생각하면 이해가 쉬울 것. 
- app.listen(포트번호, 실행함수);  
-*/
-app.listen(PORT, handleListening);
+export default app;

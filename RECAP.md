@@ -241,3 +241,19 @@ html(lang="ko")
     footer
 
 
+-mongoDB
+
+보통의 DB는 sql 기반이지만, 몽고디비는 document 기반 (package.json처럼)
+
+-mongoose 
+
+nodejs에서 몽고디비와 상호작용하기 위해 -> 자바스크립트로 작업하기 위해서 설치하는 것 ~ 
+
+
+
+CRUD
+
+Create
+Read
+Update
+Delete

@@ -7,7 +7,7 @@
     "url": "git+https://github.com/KTYoung2/youngtube.git"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server.js"
+    "dev": "nodemon --exec babel-node src/init.js"
   },
   "author": "young",
   "license": "MIT",
@@ -17,6 +17,7 @@
   "homepage": "https://github.com/KTYoung2/youngtube#readme",
   "dependencies": {
     "express": "^4.18.2",
+    "mongoose": "^7.0.5",
     "morgan": "^1.10.0",
     "pug": "^3.0.2"
   },
