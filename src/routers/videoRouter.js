@@ -21,7 +21,7 @@ videoRouter.get("/:id(\\d+)",  watch);
     digit(숫자)+(all)
 */
 videoRouter.route("/:id(\\d+)/edit").get(getEdit).post(postEdit);
-videoRouter.get("/upload").get(upload).post(postUpload);
+videoRouter.route("/upload").get(upload).post(postUpload);
 videoRouter.get("/:id(\\d+)/delete", deleteVideo);
 /* upload를 제일 위에 위치하는 이유는 
    videoRouter.get("/:id", see); 라우터 뒤에 오게 된다면 

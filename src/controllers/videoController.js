@@ -55,9 +55,33 @@ export const upload = (req, res) => {
     return res.render("upload", { pageTitle: "upload video"});
 };
 
-export const postUpload =(req, res) => {
-    //비디오 어레이 추가 예쩡 
-    const { title } = req.body;
+export const postUpload = async (req, res) => {
+    const { title, description, hashtags } = req.body;
+    //pug 파일에서 input name과 일치해야함 
+    //사용자가 upload할 data를 받아낼 document(js object) 작성
+    const video = new Video({
+        title,
+        description,
+        createdAt: Date.now(),
+        hashtags:hashtags.split(",").map((word) => `#${word}`),
+        //split(분할의 기준) -> 문자열을 분활하는 메소드
+        //map ->  callbackFunction을 실행한 결과를 가지고 새로운 배열을 만들 때 사용
+        meta: {
+            views:0,
+            rating:0,
+        },
+    });
+    /*
+    title:title
+    description:description 
+    이렇게 적는 것과 똑같음
+    왼쪽은 document, 오른쪽은 Schema
+    */
+    //사용자에게 받아낸 data저장 -> db에 저장
+    await video.save();
+    /* --> save();는 promise를 return해줌. 즉 save 작업이 끝날 때까지 await 기다려줘야함.
+        why? 위에 작성한 document(object)가 db에 기록 되고 저장되는데 시간이 좀 걸리니까~
+    */
     return res.redirect("/");
 };
 
