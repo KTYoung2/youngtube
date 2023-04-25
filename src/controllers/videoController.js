@@ -17,8 +17,12 @@ export const home = async(req, res) => {
         try / cath (에러를 부르는 방식)
     */
     try {
-        const videos = await Video.find({})
+        const videos = await Video.find({}).sort({createdAt:"desc"});
         // await -> db에게 결과값을 받을 때까지 javascript가 기다려줌. 
+        /* sort(); -> 무엇을 기준으로 데이터를 정렬할 것인가.
+           desc : 내림차순
+           asc: 오름차순
+        */
         return res.render("home", { pageTitle: "Home" , videos });
     } catch(error){
         return res.render("server-error", {error});
@@ -32,20 +36,46 @@ export const home = async(req, res) => {
    1.앞에 공백이 있으면 안 됨.
    2.전부 소문자로만 
 */
-export const watch = (req, res) => {
+export const watch = async (req, res) => {
     const { id } = req.params;
-    return res.render("watch", { pageTitle: "Watching" });
+    // id-> req.params에서 얻어오는것. 즉 router에 "/:id([0-9a-f]{24})" experss를 시켜 url을 인식하도록 설정했기때문.
+    const video = await Video.findById(id);
+    if(!video){
+        return res.render("404", { pageTitle:"Video not found."});
+    }   
+    return res.render("watch", { pageTitle: video.title, video });
 };
 
-export const getEdit = (req, res) => {
+export const getEdit = async (req, res) => {
     const { id } = req.params;
-    return res.render("edit", { pageTitle: "Editing" });
+    const video = await Video.findById(id);
+    if(!video){
+        return res.render("404", { pageTitle:"Video not found."});
+    }
+    //에러 체크를 먼저 해주면 나머지 코드는 에러를 걱정할 필요가 업ㅅ음~~
+    return res.render("edit", { pageTitle: `Editing : ${video.title}` , video });
 };
 
-export const postEdit = (req, res) => {
+export const postEdit = async (req, res) => {
     const { id } = req.params;
-    const { title } = req.body;
-    //form을 사용할땐 req.body로 부터 date를 받는다.
+    const { title, description, hashtags } = req.body;
+    const video = await Video.exists({ _id : id });
+    /*update 같은 경우 video object를 굳이 불러올 이유가 없음. 
+    단순히 영상이 존재하는지만 확인하면 됨
+    exists({ _id : id }); -> true or false 
+    exists-> filter로 받음.
+    */
+    if(!video){
+        return res.render("404", { pageTitle:"Video not found."});
+    }
+    await Video.findByIdAndUpdate(id, {
+        title, 
+        description, 
+        hashtags : Video.formatHashtags( hashtags),
+    });
+    /* 업데이트를 할 때 목록을 일일히 적어주며 수정이기엔,,,, 너무 비효율적. 몽구스에서 제공하는 
+       .findByIdAndUpdate(업데이트할 id, 업데이트 목록) -> .findById ~ 는 꼭 id를 인자(argument)로 받음.
+    */
     return res.redirect(`/videos/${id}`);
     //redirect()는 브라우저가 자동으로 이동하도록 하는 것.
 };
@@ -59,17 +89,11 @@ export const postUpload = async (req, res) => {
     const { title, description, hashtags } = req.body;
     //pug 파일에서 input name과 일치해야함 
     //사용자가 upload할 data를 받아낼 document(js object) 작성
-    const video = new Video({
+    try {  
+        const video = new Video({
         title,
         description,
-        createdAt: Date.now(),
-        hashtags:hashtags.split(",").map((word) => `#${word}`),
-        //split(분할의 기준) -> 문자열을 분활하는 메소드
-        //map ->  callbackFunction을 실행한 결과를 가지고 새로운 배열을 만들 때 사용
-        meta: {
-            views:0,
-            rating:0,
-        },
+        hashtags : Video.formatHashtags( hashtags),
     });
     /*
     title:title
@@ -83,12 +107,34 @@ export const postUpload = async (req, res) => {
         why? 위에 작성한 document(object)가 db에 기록 되고 저장되는데 시간이 좀 걸리니까~
     */
     return res.redirect("/");
+}   catch(error){
+    console.log(error);
+    //에러를 잡는다고 해도 무언가를 return 해야함 ! 
+                //에러 메세지 출력. 
+    return res.render("upload", { 
+                       pageTitle: "upload video", 
+                       errorMessage: error._message,});
+}   
 };
 
+export const deleteVideo = async (req, res) => {
+    const { id } = req.params;
+    await Video.findByIdAndDelete(id);
+    return res.redirect("/");
+};
 
-
-export const search = (req, res) => res.send("Search Videos");
-export const deleteVideo = (req, res) => {
-    return res.send("Delete Videos");
-}
+export const search = async (req, res) => {
+   const { keyword } = req.query;
+   //req.query -> url에 있는 모든 정보를 확인 할 수 있음.
+   let videos = [];
+   if(keyword) {
+        videos = await Video.find({
+        title: {
+            $regex: new RegExp(`^${keyword}
+            `, "i"),
+        },       
+    });
+} 
+   return res.render("search", { pageTitle: "Search", videos});
+};
 
