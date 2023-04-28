@@ -3,9 +3,11 @@ import logger from "morgan";
 /**미들웨어를 직접 만들어서 사용할 수 있지만  "morgan"이 좀 더 정교함
  GET, path, satus code, 응답시간 이 모든 정보를 가지고 있음.
 */
+import session from "express-session";
 import rootRouter from "./routers/rootRouter";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
+import { localsMiddleware } from "./middleware";
 
 
 
@@ -37,6 +39,42 @@ app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
 /* express에게 form value를 이해하도록 하고, 자바스크립트 형식으로 변형시켜줌 */
 app.use(express.urlencoded({ extended: true }));
+
+/*
+세션 미들웨어. (유저 기억하기)
+                --> 유저에게 쿠키를 보내주기. 
+
+세션이란? 백엔드 / 브라우저 사이에 어떤 활동을 했는지 기억하는 것. (하지만 2주 뒤에 세션은  사라짐. )
+즉 브라우저와 백엔드 사이의 memory, history 같은 거임. 
+이게(기억하는것이) 작동하려면 백엔드& 브라우저가 서로에대한 정보를 가지고 있어야한다. 
+서버에서 http에 요청한것이 끝나면 백엔드, 브라우저는 아무것도 더이상 할 수 없고
+서버는 누가 요청을 보냈는지 잊어버림(브라우저도).-> 이것을 스테이리스(무상태)
+한번 연결하고 끝나기 때문. 
+그래서 우리는 유저가 백엔드에게 뭔가 요청할 때미다 누가 요청할 수 있는지
+알 수 있게끔  유저에게 어떤 정보를 남겨줘야함. 
+
+브라우저 & 백엔드 사이에는 wifi처럼 유지되는 연결이 없으니 
+백엔드에 요청을 보낼때마다 서버가 브라우저에게 쿠키(id)를 같이 보내줘야 유저를 기억할 수 있다! 
+-> 세션과 세션 id 는 브라우저를 기억하는 방식 중 하나
+
+
+import session from "express-session"; 이 있으면
+익스프레스가 알아서 브라우저를 위한 세션 id를 만들고
+브라우저에게 보내줌.-> 브라우저가 쿠키에 그 세션 id 저장->
+익스프레스에서 그 세션을 세션db에 저장 (세션 db에 있는 id = 쿠키 id 같도록)
+-> 브라우저한테 보내서 쿠키에 저장한 세션 id를 브라우저가 localhost의 모든 url에 요청을 보낼 때마다 
+세션 id를 요청과 함께 보냄. -> 그러면 백엔드에서 어떤 유저가 어느 브라우저에게 요청을 보냈는지 알 수 있음 !
+
+*/
+
+app.use(session({
+    secret: "Hello!",
+    resave: true,
+    saveUninitialized: true,
+})
+);
+
+app.use(localsMiddleware);
 //router 생성
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
