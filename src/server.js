@@ -3,7 +3,7 @@ import logger from "morgan";
 /**미들웨어를 직접 만들어서 사용할 수 있지만  "morgan"이 좀 더 정교함
  GET, path, satus code, 응답시간 이 모든 정보를 가지고 있음.
 */
-import globalRouter from "./routers/globalRouter";
+import rootRouter from "./routers/rootRouter";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 
@@ -38,7 +38,7 @@ app.set("views", process.cwd() + "/src/views");
 /* express에게 form value를 이해하도록 하고, 자바스크립트 형식으로 변형시켜줌 */
 app.use(express.urlencoded({ extended: true }));
 //router 생성
-app.use("/", globalRouter);
+app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 

@@ -50,7 +50,7 @@ export const getEdit = async (req, res) => {
     const { id } = req.params;
     const video = await Video.findById(id);
     if(!video){
-        return res.render("404", { pageTitle:"Video not found."});
+        return res.status(404).render("404", { pageTitle: "Video not found."});
     }
     //에러 체크를 먼저 해주면 나머지 코드는 에러를 걱정할 필요가 업ㅅ음~~
     return res.render("edit", { pageTitle: `Editing : ${video.title}` , video });
@@ -111,7 +111,7 @@ export const postUpload = async (req, res) => {
     console.log(error);
     //에러를 잡는다고 해도 무언가를 return 해야함 ! 
                 //에러 메세지 출력. 
-    return res.render("upload", { 
+    return res.status(400).render("upload", { 
                        pageTitle: "upload video", 
                        errorMessage: error._message,});
 }   

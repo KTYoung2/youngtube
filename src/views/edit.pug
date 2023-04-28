@@ -1,10 +1,13 @@
 extends base.pug
 
 block content
-    h4 Change title of video
+    h4 Update Video 
     form(method="POST")
         //- POST : 파일을 보내거나 db 값을 바꾸는 뭔가를 보낼때 사용
         //- GET : form에 있는 정보가 url에 그대로 노출
-        input(name="title",placeholder="Video Title",value=video.title,required)
+        input(name="title",placeholder="Video Title", value=video.title, required)
         //-input에 name 부여(하지 않으면 정보 얻을수 없셈)
+        input(placeholder="Description", required, type="text", name="description", minlength=20, value=video.description )
+        input(placeholder="Hashtags, separated by comma", required, type="text", name="hashtags", value=video.hashtags.join())
+                                                                //-join() 메서드는 배열의 모든 요소를 연결해 하나의 문자열로 만듦.
         input(value="Save",type="submit")

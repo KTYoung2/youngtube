@@ -2,9 +2,8 @@ extends base.pug
 include mixins/video
 
 block content 
-    h2 Welcom here you will see the tranding viedos
-    each videoInfoValue in videos 
-        +video(videoInfoValue) 
+    each video in videos 
+        +video(video) 
     else 
         li sorry noting found.
         
