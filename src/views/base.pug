@@ -1,10 +1,11 @@
 doctype html 
 html(lang="ko")
     head 
-        title #{pageTitle} | YoungTuBE
+        title #{pageTitle} | #{siteName}
         //- 변수 내보내는 곳 -> controller
         link(rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css")
     body
+    
         header
             h1=pageTitle
             //-  #{변수} , 태그=변수는 똑같은 것. 근데 왜 다르게 표기하냐면 
@@ -13,13 +14,21 @@ html(lang="ko")
             nav 
                 ul 
                     li 
-                        a(href="/videos/upload") UPLOAD VIDEO
-                    li 
                         a(href="/") HOME
+                    if loggedIn
+                        li 
+                            a(href="/logout") Log Out
+                        li 
+                            a(href="my-profile") #{loggedInUser.name}님의 Profile
+                    else
+                        li 
+                            a(href="/join") JOIN
+                        li 
+                            a(href="/login") LOGIN
                     li 
                         a(href="/search") SEARCH
                     li 
-                        a(href="/join") JOIN
+                        a(href="/videos/upload") UPLOAD VIDEO
                     
         main
             block content
