@@ -86,6 +86,7 @@ export const upload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+    const file = req.file;
     const { title, description, hashtags } = req.body;
     //pug 파일에서 input name과 일치해야함 
     //사용자가 upload할 data를 받아낼 document(js object) 작성
@@ -93,6 +94,7 @@ export const postUpload = async (req, res) => {
         const video = new Video({
         title,
         description,
+        fileUrl: file.path, 
         hashtags : Video.formatHashtags( hashtags),
     });
     /*
