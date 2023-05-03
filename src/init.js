@@ -1,3 +1,5 @@
+import "dotenv/config";
+//env 접근
 import "./db"; //sever에 db파일 import
 import "./models/Video";
 import "./models/User";

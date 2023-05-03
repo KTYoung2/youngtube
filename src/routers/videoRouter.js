@@ -7,6 +7,8 @@ import {
     postEdit,
     postUpload,
     } from "../controllers/videoController";
+import { protectorMiddleware } from "../middleware";
+
 
 const videoRouter = express.Router();
 
@@ -16,9 +18,9 @@ videoRouter.get("/:id([0-9a-f]{24})", watch);
     매번 생겨나는 게시물,동영상에 따라 라우터를 생성할 수 없기 때문에~ 
     각 생성 게시물에 id (변수)를 부여해 해당 라우터로 가져오는 것.  
 */
-videoRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
-videoRouter.route("/:id([0-9a-f]{24})/delete").get(deleteVideo);
-videoRouter.route("/upload").get(upload).post(postUpload);
+videoRouter.route("/:id([0-9a-f]{24})/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
+videoRouter.route("/:id([0-9a-f]{24})/delete").all(protectorMiddleware).get(deleteVideo);
+videoRouter.route("/upload").all(protectorMiddleware).get(upload).post(postUpload);
 /* upload를 제일 위에 위치하는 이유는 
    videoRouter.get("/:id", see); 라우터 뒤에 오게 된다면 
    express가 업로드 경로를(/upload) parameter(:id)로 인식!  
