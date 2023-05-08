@@ -1,3 +1,4 @@
+import User from "../models/User";
 import Video from "../models/Video";
 
 /**    Video.find({}, (error,Videos) => {
@@ -39,7 +40,11 @@ export const home = async(req, res) => {
 export const watch = async (req, res) => {
     const { id } = req.params;
     // id-> req.params에서 얻어오는것. 즉 router에 "/:id([0-9a-f]{24})" experss를 시켜 url을 인식하도록 설정했기때문.
-    const video = await Video.findById(id);
+    const video = await Video.findById(id).populate("owner");
+                        /*populate() => 몽구스에서 제공하는 프로퍼티,
+                        몽구스가 'video'를 찾고 그 안에서 owner도 찾아줌
+                        owner => ObjectID => User 객체 전체를 값으로 가져옴.  
+                                                                    */
     if(!video){
         return res.render("404", { pageTitle:"Video not found."});
     }   
@@ -48,12 +53,18 @@ export const watch = async (req, res) => {
 
 export const getEdit = async (req, res) => {
     const { id } = req.params;
+    const { user : { _id },
+    }= req.session;
     const video = await Video.findById(id);
     if(!video){
         return res.status(404).render("404", { pageTitle: "Video not found."});
     }
+    if(String(video.owner) !== String( _id)){
+        //js는 생김새 뿐만아니라 type도 비교
+        return res.status(403).redirect("/");
+    }
     //에러 체크를 먼저 해주면 나머지 코드는 에러를 걱정할 필요가 업ㅅ음~~
-    return res.render("edit", { pageTitle: `Editing : ${video.title}` , video });
+    return res.render("edit", { pageTitle: `Editing : ${video.title}` , video});
 };
 
 export const postEdit = async (req, res) => {
@@ -86,15 +97,20 @@ export const upload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+    //video의 owner로 현재 로그인 중인 유저 id 사용. 
+    const { 
+        user : {_id}, 
+    } = req.session;
     const file = req.file;
     const { title, description, hashtags } = req.body;
     //pug 파일에서 input name과 일치해야함 
     //사용자가 upload할 data를 받아낼 document(js object) 작성
     try {  
-        const video = new Video({
+        const newVideo = await Video.create({
         title,
         description,
-        fileUrl: file.path, 
+        fileUrl: file.path,
+        owner: _id, 
         hashtags : Video.formatHashtags( hashtags),
     });
     /*
@@ -103,14 +119,18 @@ export const postUpload = async (req, res) => {
     description:description 
     이렇게 적는 것과 똑같음
     왼쪽은 document, 오른쪽은 Schema
-    */
-    //사용자에게 받아낸 data저장 -> db에 저장
+    
+    사용자에게 받아낸 data저장 -> db에 저장
     await video.save();
-    /* --> save();는 promise를 return해줌. 즉 save 작업이 끝날 때까지 await 기다려줘야함.
+     --> save();는 promise를 return해줌. 즉 save 작업이 끝날 때까지 await 기다려줘야함.
         why? 위에 작성한 document(object)가 db에 기록 되고 저장되는데 시간이 좀 걸리니까~
     */
+    const user = await User.findById(_id);
+    user.videos.push(newVideo._id);
+    user.save();
     return res.redirect("/");
-}   catch(error){
+    //array에 요소를 추가할 때는 push() 사용
+    } catch(error){
     console.log(error);
     //에러를 잡는다고 해도 무언가를 return 해야함 ! 
                 //에러 메세지 출력. 
@@ -122,6 +142,21 @@ export const postUpload = async (req, res) => {
 
 export const deleteVideo = async (req, res) => {
     const { id } = req.params;
+    const { user : { _id },
+    }= req.session;
+    const video = await Video.findById(id);
+    /** 왜 여기서는 populate를 쓰지 않을까?
+     * populate는 모든 정보를 가져와 비교하는데
+     * 필요없는 데이터를 굳이 로드할 필요가 없으니까 ~ 
+     * 여기서는 id만을 가지고 비교하는 것으로 충분 ! 
+     */
+    if(!video){
+        return res.status(404).render("404", { pageTitle: "Video not found."});
+    }
+    if(String(video.owner) !== String( _id)){
+        //js는 생김새 뿐만아니라 type도 비교
+        return res.status(403).redirect("/");
+    }
     await Video.findByIdAndDelete(id);
     return res.redirect("/");
 };

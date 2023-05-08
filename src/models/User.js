@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     password: {type: String, require: true},
     name: {type: String, require: true},
     location: String, 
+    videos : [{type : mongoose.Schema.Types.ObjectId, ref:"Video"}],
 }); 
 
 /**     비번을 그대로 db에 저장하는건 미친짓 ~ 해킹이슈에 너무 취약.
@@ -22,9 +23,12 @@ const userSchema = new mongoose.Schema({
         작업할 수 있게 만들어줌.        
           */ 
 userSchema.pre("save", async function(){
+  if(this.isModified("password")) {
+    //비밀번호가 변경될 때에만 hash되도록.
     this.password = await bcrypt.hash(this.password, 5)
 //이 function 안에서의 this 는 create (만들어지는)되는 User 지칭
 //bcrypt.hash(this.password, 해싱 횟수)
+  }
 });
 
 
