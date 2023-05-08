@@ -2,6 +2,7 @@ import User from "../models/User";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
+
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 export const postJoin = async (req, res) => {
     const { email, username, password, password2, name, location } = req.body;
@@ -132,14 +133,17 @@ export const getEdit = (req, res) => {
 };
 
 export const postEdit = async (req, res) => {
+    const file = req.file;
     const {
         session : {
-            user: {_id},
+            user: { _id, avatarUrl},
         },
-        body: {email, username, name, location},
+        body: {email, username, name, location }, 
     } = req;
+    console.log(file);
     const updatedUser = await User.findByIdAndUpdate(_id, 
-    {
+    {   
+        avatarUrl: file ? file.path : avatarUrl,
         email,
         username,
         name,
@@ -151,10 +155,55 @@ export const postEdit = async (req, res) => {
     return res.redirect("/users/edit");
 };
 
+export const getChangePassword = (req, res) => {
+    return res.render("change-password",  { pageTitle:"ChangePassword" });
+};
+
+export const postChangePassword = async (req, res) => {
+    const {
+        session : {
+            user: {_id, password},
+            //누가 지금 로그인을 하고 있는지 사용자 확인.
+        },
+        body: {oldPassword, newPassword, newPassword1 },
+    } = req;
+
+    const ok = await bcrypt.compare(oldPassword, password);
+    if(!ok){
+        return res.status(400).render("change-password",  
+        { pageTitle:"ChangePassword", 
+        errorMessage: "기존 비밀번호가 일치하지 않습니다."});
+    }
+
+    if(newPassword !== newPassword1){
+        return res.status(400).render("change-password",  
+        { pageTitle:"ChangePassword", 
+        errorMessage: "새로운 비밀번호가 일치하지 않습니다."});
+    }
+  const user = await User.findById(_id);
+  user.password = newPassword;
+  //새로운 비민번호 hash
+  await user.save();
+  //새로운 비밀번호 세션 업데이트
+  req.session.user.password = user.password;
+  return res.redirect("/");  
+};
+
+
+
+export const see = async (req, res) => {
+    const {id} = req.params;
+    const user = await User.findById(id);
+    if(!user){
+        return res.status(404).render("404", {pageTitle : "User not found."});
+    };
+    return res.render("profile", { 
+        pageTitle: user.name,
+        user,
+    });
+};
 
 export const remove = (req, res) => res.send("Delete User");
-export const see = (req, res) => res.send("See User");
-
 
 
 

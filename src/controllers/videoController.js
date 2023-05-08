@@ -98,6 +98,7 @@ export const postUpload = async (req, res) => {
         hashtags : Video.formatHashtags( hashtags),
     });
     /*
+    
     title:title
     description:description 
     이렇게 적는 것과 똑같음

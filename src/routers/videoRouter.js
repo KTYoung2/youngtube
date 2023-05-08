@@ -7,7 +7,9 @@ import {
     postEdit,
     postUpload,
     } from "../controllers/videoController";
-import { protectorMiddleware } from "../middleware";
+import { protectorMiddleware,
+    videoUpload
+ } from "../middleware";
 
 
 const videoRouter = express.Router();
@@ -20,7 +22,11 @@ videoRouter.get("/:id([0-9a-f]{24})", watch);
 */
 videoRouter.route("/:id([0-9a-f]{24})/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
 videoRouter.route("/:id([0-9a-f]{24})/delete").all(protectorMiddleware).get(deleteVideo);
-videoRouter.route("/upload").all(protectorMiddleware).get(upload).post(postUpload);
+videoRouter
+.route("/upload")
+.all(protectorMiddleware)
+.get(upload)
+.post(videoUpload.single("video"), postUpload);
 /* upload를 제일 위에 위치하는 이유는 
    videoRouter.get("/:id", see); 라우터 뒤에 오게 된다면 
    express가 업로드 경로를(/upload) parameter(:id)로 인식!  

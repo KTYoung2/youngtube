@@ -91,6 +91,7 @@ app.use(session({
 
 app.use(localsMiddleware);
 //router 생성
+app.use("/uploads", express.static("uploads"));
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
