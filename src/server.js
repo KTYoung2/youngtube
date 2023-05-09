@@ -90,8 +90,10 @@ app.use(session({
 
 
 app.use(localsMiddleware);
-//router 생성
+//express.static()=>유저에게 보여줄 파일 지정. 
 app.use("/uploads", express.static("uploads"));
+app.use("/assets", express.static("assets"));
+//router 생성
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
