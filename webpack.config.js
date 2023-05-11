@@ -13,7 +13,8 @@ module.exports = {
     // entry => 내가 처리(변경)하고 싶은 파일
     entry: {
         main: "./src/frontend/js/main.js",
-        videoPlayer : "./src/frontend/js/videoPlayer.js"
+        videoPlayer : "./src/frontend/js/videoPlayer.js",
+        recorder : "./src/frontend/js/recorder.js"
     },
     mode: "development",
     watch:true,
