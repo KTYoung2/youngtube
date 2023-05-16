@@ -3,6 +3,8 @@ import { getEdit,
          postEdit, 
          remove, 
          logout, 
+         startGithubLogin,
+         finishGithubLogin,
          see, 
          getChangePassword , 
          postChangePassword } from "../controllers/userController"
@@ -24,12 +26,14 @@ userRouter
 .get(getChangePassword)
 .post(postChangePassword);
 
-userRouter.get("/delete", remove);
-/*
-userRouter.get("/github/start", publicOnlyMiddleware, startGithubLogin);
-userRouter.get("/github/finish", publicOnlyMiddleware, finishGithubLogin);
-*/
+//깃허브 로그인
+userRouter.get("/github/start", startGithubLogin);
+userRouter.get("/github/finish", finishGithubLogin);
+
 
 userRouter.get("/:id", see);
+
+userRouter.get("/delete", remove);
+
 
 export default userRouter;

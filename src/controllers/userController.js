@@ -3,7 +3,7 @@ import Video from "../models/Video";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
-
+//회원가입
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 export const postJoin = async (req, res) => {
     const { email, username, password, password2, name, location } = req.body;
@@ -47,6 +47,8 @@ export const postJoin = async (req, res) => {
     }   
 };
 
+
+//로그인
 export const getLogin = (req, res) => res.render("login", { pageTitle: "Login"});
 export const postLogin = async (req, res) => {
     const {username, password} = req.body;
@@ -73,62 +75,84 @@ export const postLogin = async (req, res) => {
     return res.redirect("/");
 };
 
-/*
-//url 코드는 짧고 간결하게 함수로 지정해서 관리해주기. 
+
+//깃허브 로그인
 export const startGithubLogin = (req, res) => {
     const baseUrl = "https://github.com/login/oauth/authorize";
     const config = {
-        client_id : process.env.GH_CLIENT,
-        allow_signup: false,
-        scope: "read:user user:email",
+        client_id:process.env.GH_CLIENT,
+        allow_signup:false,
+        scope:"read:user user:email",
+        //유저에게 얼마나 많은 정보를 읽어내고 어떤 정보를 가져올 것인가. => scope 설정
     };
     const params = new URLSearchParams(config).toString();
     const finalUrl = `${baseUrl}?${params}`;
     return res.redirect(finalUrl);
 };
 
+
 export const finishGithubLogin = async (req, res) => {
     const baseUrl = "https://github.com/login/oauth/access_token";
     const config = {
-        client_id: process.env.GH_CLIENT,
-        client_secret: process.env.GH_SECRET,
-        code: req.query.code,
+      client_id: process.env.GH_CLIENT,
+      client_secret: process.env.GH_SECRET,
+      code: req.query.code,
     };
     const params = new URLSearchParams(config).toString();
     const finalUrl = `${baseUrl}?${params}`;
+    //finalUrl에 POST 요청 보내기.
     const tokenRequest = await (
-        fetch(finalUrl, {
-        method: "POST",
-        headers: {
+        await fetch(finalUrl, {
+          method: "POST",
+          headers: {
             Accept: "application/json",
-        },
-    })
-    ).json();
-    if("access_token" in tokenRequest) {
+          },
+        })
+      ).json();
+      if ("access_token" in tokenRequest) {
         const { access_token } = tokenRequest;
-        const apiUrl ="https://api.github.com";
-        const userData = await ( 
-            await fetch(`${apiUrl}/user`,{
+        const apiUrl = "https://api.github.com";
+        const userData = await (
+          await fetch(`${apiUrl}/user`, {
             headers: {
-                Authorization: `token ${access_token}`,
+              Authorization: `token ${access_token}`,
+            },
+          })
+        ).json();
+        console.log(userData);
+        const emailData = await (
+            await fetch(`${apiUrl}/user/emails`, {
+                headers: {
+                  Authorization: `token ${access_token}`,
                 },
-            })
-        ).json(); 
-        const emailData = await (   
-            await fetch(`${apiUrl}/user/emails`,{
-            headers: {
-                Authorization: `token ${access_token}`,
-                },
-            })).json;
-    } else {
+              })
+            ).json();
+        //깃헙에서 제공해주는 list에서 primary, verified된 email 객체 찾기
+        const emailObj = emailData.find(
+            (email) => email.primary === true && email.verified === true
+        );
+        if(!emailObj){
+            return res.redirect("/login");    
+        }
+        const existingUser = await User.findOne({email: emailObj.email});
+        if(existingUser){
+            req.session.loggedIn = true;
+            req.session.user = existingUser;
+            return res.redirect("/");
+        }else{
+
+        }
+      } else {
         return res.redirect("/login");
-    }
+      }
 };
-*/
+
 
 export const logout = (req, res) => {};
 
 
+
+//회원 정보수정
 export const getEdit = (req, res) => {
     return res.render("edit-profile", { pageTitle:"Edit Profile" });
 };
@@ -156,6 +180,7 @@ export const postEdit = async (req, res) => {
     return res.redirect("/users/edit");
 };
 
+//비밀번호변경
 export const getChangePassword = (req, res) => {
     return res.render("change-password",  { pageTitle:"ChangePassword" });
 };
@@ -191,7 +216,7 @@ export const postChangePassword = async (req, res) => {
 };
 
 
-
+//다른 유저 프로필보기
 export const see = async (req, res) => {
     const {id} = req.params;
     const user = await User.findById(id).populate("videos");

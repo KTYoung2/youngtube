@@ -12,6 +12,7 @@ import Video from "../models/Video";
     });
 */
 
+//메인 홈
 export const home = async(req, res) => { 
     /* promise -> async, await 는 callback보다 좀 더 최신기술.
         직관적인 것이 장점이라  javascript가 어디서 어떻게 기다리는지 바로 알 수 있음. 
@@ -37,6 +38,8 @@ export const home = async(req, res) => {
    1.앞에 공백이 있으면 안 됨.
    2.전부 소문자로만 
 */
+
+//비디오시청
 export const watch = async (req, res) => {
     const { id } = req.params;
     // id-> req.params에서 얻어오는것. 즉 router에 "/:id([0-9a-f]{24})" experss를 시켜 url을 인식하도록 설정했기때문.
@@ -51,6 +54,8 @@ export const watch = async (req, res) => {
     return res.render("watch", { pageTitle: video.title, video });
 };
 
+
+//비디오 수정
 export const getEdit = async (req, res) => {
     const { id } = req.params;
     const { user : { _id },
@@ -92,6 +97,7 @@ export const postEdit = async (req, res) => {
 };
 
 
+//비디오 업로드
 export const upload = (req, res) => {
     return res.render("upload", { pageTitle: "upload video"});
 };
@@ -140,6 +146,8 @@ export const postUpload = async (req, res) => {
 }   
 };
 
+
+//비디오 삭제
 export const deleteVideo = async (req, res) => {
     const { id } = req.params;
     const { user : { _id },
@@ -161,6 +169,8 @@ export const deleteVideo = async (req, res) => {
     return res.redirect("/");
 };
 
+
+//비디오 검색
 export const search = async (req, res) => {
    const { keyword } = req.query;
    //req.query -> url에 있는 모든 정보를 확인 할 수 있음.
