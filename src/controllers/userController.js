@@ -52,7 +52,7 @@ export const postJoin = async (req, res) => {
 export const getLogin = (req, res) => res.render("login", { pageTitle: "Login"});
 export const postLogin = async (req, res) => {
     const {username, password} = req.body;
-    const user = await User.findOne({username});
+    const user = await User.findOne({ username, socialOnly: false });
     //유저가 로그인 하려는 계정 찾기. 
     
     //유저 id 유무 체크 
@@ -134,31 +134,31 @@ export const finishGithubLogin = async (req, res) => {
         if(!emailObj){
             return res.redirect("/login");    
         }
-        const existingUser = await User.findOne({email: emailObj.email});
-        if(existingUser){
-            req.session.loggedIn = true;
-            req.session.user = existingUser;
-            return res.redirect("/");
-        }else{
-            const user = await User.create({
+        let user = await User.findOne({email: emailObj.email});
+        if(!user){
+            user = await User.create({
+                avatarUrl: userData.avatar_url,
                 name:userData.name, 
                 email:emailObj.email,
                 username:userData.login, 
                 password: "",
                 socialOnly: true,
                 location:userData.location,
-            });   
-            req.session.loggedIn = true;
-            req.session.user = user;
-            return res.redirect("/");
+            });
+        }   
+        req.session.loggedIn = true;
+        req.session.user = user;
+        return res.redirect("/");
+    } else{
+        return res.redirect("/");
         }
-      } else {
-        return res.redirect("/login");
-      }
 };
 
 
-export const logout = (req, res) => {};
+export const logout = (req, res) => {
+    req.session.destroy();
+    return res.redirect("/");
+};
 
 
 
@@ -239,7 +239,7 @@ export const see = async (req, res) => {
     });
 };
 
-export const remove = (req, res) => res.send("Delete User");
+
 
 
 

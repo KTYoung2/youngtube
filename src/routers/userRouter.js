@@ -1,18 +1,17 @@
 import express  from "express";
 import { getEdit, 
          postEdit, 
-         remove, 
          logout, 
          startGithubLogin,
          finishGithubLogin,
          see, 
          getChangePassword , 
          postChangePassword } from "../controllers/userController"
-import { protectorMiddleware, avatarUpload } from "../middleware";
+import { protectorMiddleware, avatarUpload, publicOnlyMiddleware } from "../middleware";
 
 const userRouter = express.Router();
 
-userRouter.get("/logout", protectorMiddleware, logout);
+userRouter.get("/logout",logout);
 userRouter
 .route("/edit")
 .all(protectorMiddleware)
@@ -27,13 +26,11 @@ userRouter
 .post(postChangePassword);
 
 //깃허브 로그인
-userRouter.get("/github/start", startGithubLogin);
-userRouter.get("/github/finish", finishGithubLogin);
-
+userRouter.get("/github/start", publicOnlyMiddleware, startGithubLogin);
+userRouter.get("/github/finish", publicOnlyMiddleware, finishGithubLogin);
 
 userRouter.get("/:id", see);
 
-userRouter.get("/delete", remove);
 
 
 export default userRouter;
