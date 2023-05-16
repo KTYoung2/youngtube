@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
     email: {type: String, require: true, unique: true},
-                                        //오직 하나의 값만 저장.
+                                  //오직 하나의 값만 저장.
     avatarUrl: {type: String, require: true},
+    //유저가 깃허브로 로그인 했는지 유무를 알기위해 
     socialOnly: {type: Boolean, default: false},
     username: {type: String, require: true, unique: true},
-    password: {type: String, require: true},
+    password: {type: String},
     name: {type: String, require: true},
     location: String, 
     videos : [{type : mongoose.Schema.Types.ObjectId, ref:"Video"}],
