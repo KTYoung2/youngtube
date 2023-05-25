@@ -106,12 +106,16 @@ const handelMouseLeave = () => {
     controllTimeout = setTimeout(hideControls, 3000);
 };
 
+const handleEnded = () => {
+    fetch("/api/videos/view")
+};
 
   playBtn.addEventListener("click", handelPlayClick);
   muteBtn.addEventListener("click", handleMute);
   volumeRange.addEventListener("input", handleVolumeChange);
   video.addEventListener("loadedmetadata", handleLoadedMetadata);
   video.addEventListener("timeupdate", handleTimeUpdate);
+  video.addEventListener("ended", handleEnded);
   timeline.addEventListener("input", handleTimeLineChange);
   fullScreen.addEventListener("click", handleFullscreen);
   video.addEventListener("mousemove", handelMouseMove);
