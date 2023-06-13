@@ -72,7 +72,7 @@ const handleLoadedMetadata = () => {
     video.currentTime = value;
   };
 
-
+ 
   const handleFullscreen = () => {
     const fullscreen = document.fullscreenElement;
     if(fullscreen){
@@ -107,8 +107,11 @@ const handelMouseLeave = () => {
 };
 
 const handleEnded = () => {
-    fetch("/api/videos/view")
-};
+    const { id } = videoContainer.dataset;
+    fetch(`/api/videos/${id}/view`, {
+      method: "POST",
+    });
+  };
 
   playBtn.addEventListener("click", handelPlayClick);
   muteBtn.addEventListener("click", handleMute);

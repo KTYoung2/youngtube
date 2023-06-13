@@ -2,5 +2,35 @@
 
 body {
     background-color: $aquamarine;
+    color: rgb(6, 112, 205);
+};
+
+
+@keyframes goAway {
+    from {
+        transform: none;
+    }
+    to {
+        transform: translateY(-60px);
+    }
+    
+};
+
+.message {
+   position: absolute;
+   top: 10px;
+   left: 0;
+   right: 0;
+   margin: 0 auto;
+   max-width: 200px;
+   padding: 10px 20px;
+   border-radius: 40px;
+   text-align: center;
+   animation: goAway 0.5s ease-in-out forwards;
+   animation-delay: 5s;
+   &.error {
+    background-color: rgb(234, 48, 141);
     color: aliceblue;
+    font-weight: bold;
+   };
 };

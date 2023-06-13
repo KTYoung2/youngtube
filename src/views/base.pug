@@ -1,12 +1,19 @@
+include mixins/messages
+
 doctype html 
 html(lang="ko")
     head 
         title #{pageTitle} | #{siteName}
         //- 변수 내보내는 곳 -> controller
         link(rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css")
-        link(rel="stylesheet", href="/assets/css/style.css")
+        link(rel="stylesheet" href="/assets/css/style.css")
     body
-    
+        if messages.error 
+            +message("error", messages.error)
+        if messages.info 
+            +message("info", messages.info)
+        if messages.success 
+            +message("success", messages.success)
         header
             h1=pageTitle
             //-  #{변수} , 태그=변수는 똑같은 것. 근데 왜 다르게 표기하냐면 

@@ -66,6 +66,7 @@ export const getEdit = async (req, res) => {
     }
     if(String(video.owner) !== String( _id)){
         //js는 생김새 뿐만아니라 type도 비교
+        req.flash("error", "접근할 수 없습니다.");
         return res.status(403).redirect("/");
     }
     //에러 체크를 먼저 해주면 나머지 코드는 에러를 걱정할 필요가 업ㅅ음~~
@@ -92,6 +93,7 @@ export const postEdit = async (req, res) => {
     /* 업데이트를 할 때 목록을 일일히 적어주며 수정이기엔,,,, 너무 비효율적. 몽구스에서 제공하는 
        .findByIdAndUpdate(업데이트할 id, 업데이트 목록) -> .findById ~ 는 꼭 id를 인자(argument)로 받음.
     */
+    req.flash("success", "업로드 되었습니다.");
     return res.redirect(`/videos/${id}`);
     //redirect()는 브라우저가 자동으로 이동하도록 하는 것.
 };
@@ -186,3 +188,14 @@ export const search = async (req, res) => {
    return res.render("search", { pageTitle: "Search", videos});
 };
 
+//조회수 기록
+export const registerView = async(req, res) => {
+    const { id } = req.params;
+    const video = await Video.findById(id);
+    if(!video){
+       return res.sendStatus(404);
+    }
+    video.meta.views = video.meta.views + 1; 
+    await video.save();
+    return res.sendStatus(200);
+};

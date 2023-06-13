@@ -4,10 +4,12 @@ import logger from "morgan";
  GET, path, satus code, 응답시간 이 모든 정보를 가지고 있음.
 */
 import session from "express-session";
+import flash from "express-flash";
 import MongoStore from "connect-mongo";
 import rootRouter from "./routers/rootRouter";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
+import apiRouter from "./routers/apiRouter";
 import { localsMiddleware } from "./middleware";
 
 
@@ -88,7 +90,8 @@ app.use(session({
 })
 );
 
-
+app.use(flash());
+//flash 미들웨어는 messages locals 사용할 수 있게 해줌 
 app.use(localsMiddleware);
 //express.static()=>유저에게 보여줄 파일 지정. 
 app.use("/uploads", express.static("uploads"));
@@ -97,6 +100,6 @@ app.use("/assets", express.static("assets"));
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
-
+app.use("/api", apiRouter);
 
 export default app;

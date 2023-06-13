@@ -6,5 +6,9 @@ mixin video(video)
         ul
             each hashtag in video.hashtags 
                 li=hashtag
-        small=video.createdAt 
+        span #{video.owner.name} 님 
+        br
+        span 조회수 #{video.meta.views} 회
+        br
+        span=video.createdAt 
         hr
