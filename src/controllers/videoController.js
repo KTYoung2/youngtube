@@ -75,7 +75,7 @@ export const getEdit = async (req, res) => {
 
 export const postEdit = async (req, res) => {
     const { id } = req.params;
-    const { title, description, hashtags } = req.body;
+    const { title, description, hashtags} = req.body;
     const video = await Video.exists({ _id : id });
     /*update 같은 경우 video object를 굳이 불러올 이유가 없음. 
     단순히 영상이 존재하는지만 확인하면 됨
@@ -110,7 +110,7 @@ export const postUpload = async (req, res) => {
         user : {_id}, 
     } = req.session;
     const file = req.file;
-    const { title, description, hashtags } = req.body;
+    const { title, description, hashtags} = req.body;
     //pug 파일에서 input name과 일치해야함 
     //사용자가 upload할 data를 받아낼 document(js object) 작성
     try {  
