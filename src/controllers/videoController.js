@@ -199,3 +199,10 @@ export const registerView = async(req, res) => {
     await video.save();
     return res.sendStatus(200);
 };
+
+export const createComment = (req, res) => {
+    console.log(req.params);
+    console.log(req.body);
+    //js에서 보낸 json.string 받아 json.parse JS object로 바꿈
+    return res.end();
+};
