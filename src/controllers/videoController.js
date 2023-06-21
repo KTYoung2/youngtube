@@ -1,5 +1,7 @@
+import { async } from "regenerator-runtime";
 import User from "../models/User";
 import Video from "../models/Video";
+import Comment from "../models/Comment";
 
 /**    Video.find({}, (error,Videos) => {
         /*callback -> 어떤 동작이 끝나면 특정 function을 부르도록 만들어진 함수.
@@ -43,7 +45,7 @@ export const home = async(req, res) => {
 export const watch = async (req, res) => {
     const { id } = req.params;
     // id-> req.params에서 얻어오는것. 즉 router에 "/:id([0-9a-f]{24})" experss를 시켜 url을 인식하도록 설정했기때문.
-    const video = await Video.findById(id).populate("owner");
+    const video = await Video.findById(id).populate("owner").populate("comments");
                         /*populate() => 몽구스에서 제공하는 프로퍼티,
                         몽구스가 'video'를 찾고 그 안에서 owner도 찾아줌
                         owner => ObjectID => User 객체 전체를 값으로 가져옴.  
@@ -200,9 +202,31 @@ export const registerView = async(req, res) => {
     return res.sendStatus(200);
 };
 
-export const createComment = (req, res) => {
-    console.log(req.params);
-    console.log(req.body);
-    //js에서 보낸 json.string 받아 json.parse JS object로 바꿈
-    return res.end();
+
+//댓글작성
+export const createComment = async(req, res) => {
+    //id, 댓글내용, 유저 받아오기
+    const {
+        session: { user },
+        body: { text },
+        params : { id }, 
+    } = req;
+
+    const video = await Video.findById(id);
+
+    if(!video){
+        return res.sendStatus(404);
+    };
+
+    //댓글 생성& 디비 저장
+    const comment = await Comment.create({
+        text,
+        owner: user._id,
+        video: id,
+    });
+
+    //비디오에 댓글 업데이트 (sql db는 자동으로 해주지만 몽고는 직접 설정해줘여함.)
+    video.comments.push(comment._id);
+    video.save();
+    return res.sendStatus(201);
 };

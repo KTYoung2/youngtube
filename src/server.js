@@ -40,8 +40,12 @@ app.set("view engine", "pug");
  app.set("views", process.cwd() + "/src/views(경로)");                                   
 */
 app.set("views", process.cwd() + "/src/views");
+
 /* express에게 form value를 이해하도록 하고, 자바스크립트 형식으로 변형시켜줌 */
 app.use(express.urlencoded({ extended: true }));
+
+//서버가 fech에서 오는 데이터를 이해하도록 -> String으로 받아서 -> js변형 미들웨어 설정. 
+app.use(express.json());
 
 /*
 세션 미들웨어. (유저 기억하기)

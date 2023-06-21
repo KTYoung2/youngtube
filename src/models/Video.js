@@ -16,6 +16,7 @@ const videoSchema = new mongoose.Schema({
         views: { type: Number, default: 0, required: true},
         rating: { type: Number, default: 0, required: true},
     }, //초록색의 data type들은 js에서 제공하는 것.
+    comments : [{type: mongoose.Schema.Types.ObjectId, require: true, ref:"Comment"}],
     //user와 video DB연결
     owner : {type : mongoose.Schema.Types.ObjectId, require: true, ref:"User"},
     //owner의 타입은 objectId -> 몽구스 코드에서만 사용할 수 있음 !  ref:"User" => 지정하려는 model

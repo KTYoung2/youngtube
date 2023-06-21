@@ -15,19 +15,27 @@ block content
                 input(type="range", step="1", value="0", min="0")#timeline
             div 
                 button#fullScreen Enter Full Screen
-
-    //-
-        div
-            p=video.description
-            small=video.c*dfreatedAt 
-        div
-            small Uploaded by 
-                a(href=`/users/${video.owner._id}`) #{video.owner.name}
-        if String(video.owner._id) === String(loggedInUser._id)
-            a(href=`${video.id}/edit`) Edit Video &rarr;
-            br
-            a(href=`${video.id}/delete`) Delete Video &rarr;
+            div
+                p=video.description
+                small=video.createdAt
+                br
+                if String(video.owner._id) === String(loggedInUser._id)
+                    a(href=`${video.id}/edit`) Edit Video &rarr;
+                    br
+                    a(href=`${video.id}/delete`) Delete Video &rarr;
+    if loggedIn
+        div.video_add_comments
+            form.video_comment-form#commentForm
+                textarea(cols="30", rows="10", placeholder="댓글을 작성해 주세요. ※악성댓글은 통보 없이 삭제 됩니다.※") 
+                button 등록
+    div.video_comments
+        ul
+            each comment in video.comments.reverse()
+                li.video_comment 
+                    span #{comment.owner}님 * #{comment.createdAt} : #{comment.text} 
+    
 
 block scripts
     script(src="/assets/js/videoPlayer.js")
+    script(src="/assets/js/CommentSection.js")
 

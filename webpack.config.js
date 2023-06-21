@@ -9,12 +9,15 @@ webpack.config.js -> webpack이 읽을 콘피크 파일을 설정해서 내보�
 
 */
 
+const BASE_JS = "./src/frontend/js/";
+
 module.exports = {
     // entry => 내가 처리(변경)하고 싶은 파일
     entry: {
-        main: "./src/frontend/js/main.js",
-        videoPlayer : "./src/frontend/js/videoPlayer.js",
-        recorder : "./src/frontend/js/recorder.js"
+        main: BASE_JS + "main.js",
+        videoPlayer : BASE_JS + "videoPlayer.js",
+        recorder : BASE_JS + "recorder.js",
+        commentSection: BASE_JS + "commentSection.js",
     },
     mode: "development",
     watch:true,
