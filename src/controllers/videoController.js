@@ -171,6 +171,7 @@ export const deleteVideo = async (req, res) => {
     }
     await Video.findByIdAndDelete(id);
     return res.redirect("/");
+
 };
 
 
@@ -228,5 +229,31 @@ export const createComment = async(req, res) => {
     //비디오에 댓글 업데이트 (sql db는 자동으로 해주지만 몽고는 직접 설정해줘여함.)
     video.comments.push(comment._id);
     video.save();
-    return res.sendStatus(201);
+    return res.status(201).json({ newCommentId: comment._id });
 };
+
+//댓글 삭제
+export const deleteComment = async (req, res) => {
+    const {
+      session: {
+        user: { _id },
+      },
+      params: { commentId },
+    } = req;
+  
+    const comment = await Comment.findById(commentId).populate("owner");
+    const videoId = comment.video;
+    if (String(_id) !== String(comment.owner._id)) {
+      return res.sendStatus(404);
+    }
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res.sendStatus(404);
+    }
+  
+    video.comments.splice(video.comments.indexOf(commentId), 1);
+    await video.save();
+    await Comment.findByIdAndDelete(commentId);
+  
+    return res.sendStatus(200);
+  };

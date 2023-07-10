@@ -1,8 +1,9 @@
 
 const videoContainer = document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
-const deleteBtn = document.getElementById(".deleteComment");
 
+
+let deleteComments = document.querySelectorAll(".deleteComment");
 
 
 
@@ -16,11 +17,13 @@ const addComment = (text, id) => {
     span.innerText = ` ${text}`;
     const span2 = document.createElement("span");
     span2.innerText = "❎";
+    span2.id = "deleteComment";
     newComment.appendChild(span);
     newComment.appendChild(span2);
     //새로운 댓글 맨 위에 추가.
     videoCommentList.prepend(newComment);
 };
+
 
 const handleSubmit = async(event) => {
     event.preventDefault();
@@ -49,9 +52,18 @@ const handleSubmit = async(event) => {
         textarea.value = "";
         const { newCommentId } = await response.json();
         addComment(text, newCommentId);
+        deleteComment = document.getElementById(".deleteComment");
+        deleteComment.removeEventListener("click", handleDelete);
+        deleteComment.addEventListener("click", handleDelete);
     }
+ };
+    
+    
+    //로그인 유무에 따라 댓글창이 보이기도 하고 안 보이기도 하니까.
+    if(form) {
+        form.addEventListener("submit", handleSubmit);
+    };
 
-};
 
 /*
 
@@ -63,18 +75,24 @@ js에서 html 사라지게하기 (id로 삭제)
 
 */
 
-const handleDelete = async(event) => {
+const handleDelete = async (event) => {
+    const li = event.srcElement.parentNode;
+    const {
+        dataset: { id: commentId },
+    } = li;
+
+    await fetch(`/api/comments/${commentId}/delete`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json", 
+        },
+      });
+      li.remove();
+    };
     
-    deleteBtn.addEventListener("click", handleDelete);
-   deleteBtn
-   const response = await fetch(`/api/${commentId}/comment`, {
-    method : "DELETE"
-   });
 
-};
-
-
-//로그인 유무에 따라 댓글창이 보이기도 하고 안 보이기도 하니까.
-if(form) {
-    form.addEventListener("submit", handleSubmit);
-};
+    if (deleteComments) {
+        deleteComments.forEach((deleteComment) => {
+            deleteComment.addEventListener("click", handleDelete);
+        });
+      }

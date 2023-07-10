@@ -28,12 +28,16 @@ block content
             form.video_comment-form#commentForm
                 textarea(cols="30", rows="10", placeholder="댓글을 작성해 주세요. ※악성댓글은 통보 없이 삭제 됩니다.※") 
                 button 등록
+    div.like_section
     div.video_comments
         ul
             each comment in video.comments.reverse()
-                li.video_comment 
+                li.video_comment(data-id=comment.id) 
                     span #{comment.owner}님 * #{comment.createdAt} : #{comment.text} 
-    
+                    if String(comment.owner) === String(loggedInUser._id)
+                        span.deleteComment ❎
+
+
 
 block scripts
     script(src="/assets/js/videoPlayer.js")
