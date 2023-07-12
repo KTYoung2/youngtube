@@ -35,6 +35,7 @@ block content
                 li.video_comment(data-id=comment.id) 
                     span #{comment.owner}님 * #{comment.createdAt} : #{comment.text} 
                     if String(comment.owner) === String(loggedInUser._id)
+                        button.editComment 수정
                         span.deleteComment ❎
 
 
