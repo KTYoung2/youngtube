@@ -2,13 +2,14 @@ import { async } from "regenerator-runtime";
 
 const videoContainer = document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
+const editBtn = document.getElementById("editBtn");
 
 
 let deleteComments = document.querySelectorAll(".deleteComment");
 
 
 //백엔드로 request가 성공적일때 js로 실시간 댓글창 구현하기
-const addComment = (text, id) => {
+const addComment = (text, id, edit) => {
     const videoCommentList = document.querySelector(".video_comments ul");
     const newComment = document.createElement("li");
     newComment.dataset.id = id;
@@ -18,8 +19,11 @@ const addComment = (text, id) => {
     const span2 = document.createElement("span");
     span2.innerText = "❎";
     span2.id = "deleteComment";
+    const span3 = document.createElement("span");
+    span3.innerText = edit;
     newComment.appendChild(span);
     newComment.appendChild(span2);
+    newComment.appendChild(span3);
     //새로운 댓글 맨 위에 추가.
     videoCommentList.prepend(newComment);
 };
@@ -98,25 +102,24 @@ const handleDelete = async (event) => {
       };
 
 
-
-const editComment = async()=> {
-    const textarea = form.querySelector("textarea");
-    const text = textarea.value;
-    const {
-        dataset: { id: commentId },
-    }=text;
-
+const editComment = async(event)=> {
+    
+    
     const response  = await fetch(`/api/comments/${commentId}/edit`, {
-        method:"PUT",
-        //headers에 json을 보내고 있다고 express에게 알리는 것.
+        method:"POST",
         headers: {
             "Content-Type": "application/json", 
         },
-        // 백엔드에 string으로 보내기-> JSON.sTRINGIFY (댓글외에도 다른걸 요청할 수 있으니까)
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text }),
     });
 
     if( response.status === 201) {
-        textarea.value = editComments;
+        //textarea.value는 getter인 동시에 setter
+        text.value = edit;
     }
-}
+};
+
+
+if(editBtn){
+    editBtn.addEventListener("click", editComment)
+};

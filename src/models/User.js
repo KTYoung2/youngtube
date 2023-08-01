@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     location: String, 
     comments: [{type: mongoose.Schema.Types.ObjectId, ref:"Comment"}],
     videos : [{type : mongoose.Schema.Types.ObjectId, ref:"Video"}],
+    likes : [{type : mongoose.Schema.Types.ObjectId, ref:"Like"}],
 }); 
 
 /**     비번을 그대로 db에 저장하는건 미친짓 ~ 해킹이슈에 너무 취약.
